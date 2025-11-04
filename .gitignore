@@ -1,0 +1,26 @@
+# Python & Django
+*.pyc
+__pycache__/
+db.sqlite3
+*.log
+
+# Virtual environment
+venv/
+env/
+
+# Django static files (generated)
+staticfiles/
+static/
+
+# Node & Tailwind
+node_modules/
+npm-debug.log
+package-lock.json
+
+# IDE/OS specific
+.vscode/
+.idea/
+.DS_Store
+
+# Secret files
+.env

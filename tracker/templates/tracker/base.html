@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}AI Finance Tracker{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
+  </head>
+    <body
+      class="bg-gray-100 text-gray-900 opacity-0 animate-[fadeIn_0.6s_ease-in-out_forwards]">
+            <!-- 🌟 Responsive Navbar -->
+            <nav class="bg-blue-600 text-white px-4 py-3 shadow-md">
+              <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <!-- 🔹 Logo / Brand -->
+                <a
+                  href="{% url 'home' %}"
+                  class="text-lg sm:text-xl font-semibold flex items-center space-x-2"
+                >
+                  <span>💰</span>
+                  <span>AI Personal Finance Tracker</span>
+                </a>
+
+                <!-- 🔹 Navbar Menu -->
+                <div
+                  class="hidden sm:flex sm:items-center sm:space-x-4 flex-col sm:flex-row mt-3 sm:mt-0 text-center sm:text-left transition-all duration-300 ease-in-out"
+                  id="menu"
+                >
+                  {% if user.is_authenticated %}
+                  <!-- 🔽 User Dropdown Menu -->
+                  <div
+                    class="relative inline-block text-left"
+                    id="profile-dropdown"
+                  >
+                    <button
+                      type="button"
+                      onclick="document.getElementById('dropdown-menu').classList.toggle('hidden')"
+                      class="flex items-center space-x-2 bg-white text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-50 transition mt-2 sm:mt-0"
+                    >
+                      <span class="text-sm">👋 {{ user.username }}</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+
+                    <!-- Dropdown Items -->
+                    <div
+                      id="dropdown-menu"
+                      class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-50 transition-all duration-200 ease-in-out"
+                    >
+                      <div class="py-1">
+                        <a
+                          href="{% url 'profile' %}"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          👤 View Profile
+                        </a>
+                        <a
+                          href="{% url 'profile_edit' %}"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          ✏️ Edit Profile
+                        </a>
+                        <form method="post" action="{% url 'logout' %}">
+                          {% csrf_token %}
+                          <button
+                            type="submit"
+                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                          >
+                            🚪 Logout
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  {% else %}
+                  <!-- ✅ Login/Signup Links -->
+                  <a
+                    href="{% url 'login' %}"
+                    class="bg-green-500 px-3 py-1 rounded-lg hover:bg-green-600 transition mt-2 sm:mt-0"
+                  >
+                    🔑 Login
+                  </a>
+                  <a
+                    href="{% url 'signup' %}"
+                    class="bg-yellow-400 text-gray-900 px-3 py-1 rounded-lg hover:bg-yellow-500 transition mt-2 sm:mt-0"
+                  >
+                    ✨ Sign Up
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
+            </nav>
+
+            <!-- 🔹 Page Content -->
+            <main class="container mx-auto p-6">
+              {% block content %}{% endblock %}
+            </main>
+
+            <!-- 🔹 Flash Messages -->
+            {% if messages %}
+            <div class="fixed top-4 right-4 space-y-2 z-50">
+              {% for message in messages %}
+              <div
+                class="bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-fade-in-down"
+              >
+                {{ message }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- JS for Menu Toggle (for mobile) -->
+            <script>
+              const toggle = document.getElementById("menu-toggle");
+              const menu = document.getElementById("menu");
+              if (toggle && menu) {
+                toggle.addEventListener("click", () => {
+                  menu.classList.toggle("hidden");
+                });
+              }
+
+              // Close dropdown when clicking outside
+              document.addEventListener("click", function (event) {
+                const dropdown = document.getElementById("dropdown-menu");
+                const button = document.querySelector(
+                  "#profile-dropdown > button"
+                );
+                if (
+                  dropdown &&
+                  button &&
+                  !button.contains(event.target) &&
+                  !dropdown.contains(event.target)
+                ) {
+                  dropdown.classList.add("hidden");
+                }
+              });
+            </script>
+          </body>
+        </html>
+      </div>
+    </nav>
+  </body>
+</html>

@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-white shadow p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-700">💰 Finance Dashboard</h1>
+      <form action="{% url 'logout' %}" method="post" class="inline">
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="hover:text-red-400 bg-transparent border-none cursor-pointer"
+        >
+          Logout
+        </button>
+      </form>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow h-screen p-5">
+        <h2 class="text-lg font-semibold mb-4">Menu</h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href="{% url 'home' %}"
+              class="block py-2 px-3 rounded hover:bg-blue-100"
+              >🏠 Overview</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'expense_list' %}"
+              class="block py-2 px-3 rounded hover:bg-blue-100"
+              >📊 Expenses</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'add_expense' %}"
+              class="block py-2 px-3 rounded hover:bg-blue-100"
+              >➕ Add Expense</a
+            >
+          </li>
+          {% comment %}
+          <li>
+            <a href="#" class="block py-2 px-3 rounded hover:bg-blue-100"
+              >⚙️ Settings</a
+            >
+          </li>
+          {% endcomment %}
+        </ul>
+      </aside>
+
+      <!-- Dashboard Section -->
+      <main class="flex-1 p-6 space-y-8">
+        <h2 class="text-xl font-semibold mb-4">Dashboard Overview</h2>
+
+        <!-- Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white p-5 rounded-lg shadow hover:shadow-md">
+            <h3 class="text-gray-500">Total Income</h3>
+            <p class="text-2xl font-bold text-green-600">₹{{ total_income }}</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow hover:shadow-md">
+            <h3 class="text-gray-500">Total Expense</h3>
+            <p class="text-2xl font-bold text-red-600">₹{{ total_expense }}</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow hover:shadow-md">
+            <h3 class="text-gray-500">Savings</h3>
+            <p class="text-2xl font-bold text-blue-600">₹{{ savings }}</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow hover:shadow-md">
+            <h3 class="text-gray-500">Transactions</h3>
+            <p class="text-2xl font-bold text-purple-600">{{ transactions }}</p>
+          </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-4">Income vs Expense</h3>
+            <canvas id="financeChart" height="100"></canvas>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-4">Monthly Expense Trend</h3>
+            <canvas id="monthlyChart" height="100"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold mb-4">Recent Transactions</h3>
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-gray-100 text-left">
+                <th class="py-2 px-3">Date</th>
+                <th class="py-2 px-3">Category</th>
+                <th class="py-2 px-3">Amount</th>
+                <th class="py-2 px-3">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for expense in recent_expenses %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-2 px-3">{{ expense.date }}</td>
+                <td class="py-2 px-3">{{ expense.category }}</td>
+                <td class="py-2 px-3 text-red-600 font-semibold">
+                  ₹{{ expense.amount }}
+                </td>
+                <td class="py-2 px-3">{{ expense.description }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="py-3 text-center text-gray-400">
+                  No transactions yet.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Chart.js Script -->
+    <script>
+      // Donut Chart
+      new Chart(document.getElementById('financeChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Income', 'Expense', 'Savings'],
+          datasets: [{
+            data: [{{ total_income }}, {{ total_expense }}, {{ savings }}],
+            backgroundColor: ['#34d399', '#f87171', '#60a5fa']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+
+      // Bar Chart (Monthly)
+      new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: {
+          labels: {{ months|safe }},
+          datasets: [{
+            label: 'Monthly Expense (₹)',
+            data: {{ totals|safe }},
+            backgroundColor: '#3b82f6'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } },
+          plugins: { legend: { display: false } }
+        }
+      });
+    </script>
+  </body>
+</html>

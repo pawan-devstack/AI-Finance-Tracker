@@ -1,0 +1,29 @@
+{% extends 'tracker/base.html' %}
+{% block title %}Logged Out{% endblock %}
+{% block content %}
+
+<!-- Navbar -->
+<nav class="bg-gray-900 text-white flex justify-between items-center p-4">
+  <h1 class="text-xl font-bold">💰 AI Finance Tracker</h1>
+  <div class="space-x-4">
+    <a href="{% url 'login' %}" class="hover:text-blue-400">Login</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white shadow-xl rounded-2xl p-10 text-center w-96">
+    <h2 class="text-3xl font-bold text-gray-800 mb-4">👋 You’ve Been Logged Out</h2>
+    <p class="text-gray-600 mb-6">
+      You have successfully logged out of your account.
+    </p>
+    <a
+      href="{% url 'login' %}"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition-all"
+    >
+      🔐 Login Again
+    </a>
+  </div>
+</div>
+
+{% endblock %}
