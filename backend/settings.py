@@ -1,5 +1,6 @@
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +10,7 @@ NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s8e3(5l4^tl$9_6!d@gkho(w9syv6f(o4-y(&r4m%^yd$uz$4i'
+SECRET_KEY = os.getenv('django-insecure-s8e3(5l4^tl$9_6!d@gkho(w9syv6f(o4-y(&r4m%^yd$uz$4i', 'unsagfe dev key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
