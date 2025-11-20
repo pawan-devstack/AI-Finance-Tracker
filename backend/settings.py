@@ -19,6 +19,7 @@ SESSION_COOKIE_AGE = 300  # 5 minutes (in seconds)
 SESSION_SAVE_EVERY_REQUEST = True 
 
 ALLOWED_HOSTS = [
+    'backend.onrender.com',
     '127.0.0.1',
     'localhost',
     'georgianna-osteitic-rafael.ngrok-free.dev',
@@ -130,7 +131,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / "tracker" / "static"
 ]
