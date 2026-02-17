@@ -1,4 +1,4 @@
-
+import dj_database_url
 from pathlib import Path
 import os
 
@@ -10,27 +10,19 @@ NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('django-insecure-s8e3(5l4^tl$9_6!d@gkho(w9syv6f(o4-y(&r4m%^yd$uz$4i', 'unsagfe dev key')
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 300  # 5 minutes (in seconds)
 SESSION_SAVE_EVERY_REQUEST = True 
 
-ALLOWED_HOSTS = [
-    'backend.onrender.com',
-    '127.0.0.1',
-    'localhost',
-    'georgianna-osteitic-rafael.ngrok-free.dev',
-]
+ALLOWED_HOSTS = [os.environ.get("RENDER_EXTERNAL_HOSTNAME", "backend.onrender.com")]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://georgianna-osteitic-rafael.ngrok-free.dev',
-    'http://georgianna-osteitic-rafael.ngrok-free.dev',
+    "https://backend.onrender.com",
 ]
-
-
 
 # Application definition
 
@@ -51,7 +43,9 @@ INSTALLED_APPS = [
 TAILWIND_APP_NAME = 'theme'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,9 +54,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 ROOT_URLCONF = 'backend.urls'
-# INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1']
 
 TEMPLATES = [
     {
@@ -86,16 +80,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'finance_db',
-        'USER': 'root',
-        'PASSWORD': 'lnct1234', 
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -134,7 +122,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    BASE_DIR / "tracker" / "static"
+    BASE_DIR / "tracker" / "static" 
 ]
 
 LOGIN_URL = 'login'
@@ -168,3 +156,4 @@ LOGGING = {
 
 # Email settings (for testing)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
